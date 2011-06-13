@@ -1,0 +1,105 @@
+Argument.h
+==========
+
+A simple command line argument parser by Xiaowei (zhanxw@gmail.com) 2011.
+
+
+FEATURE
+-------
+
+1. Include Argument.h then we are all set.
+2. Comand line flags and its documentation are kept together, and you do no need to delcare any variable
+3. Store parameters to a file or restore from a file
+4. Robustly handle abnormal flags such as ---flag, or misuse between - and --
+
+
+TUTORIAL
+---------
+
+We explain a brief example about how to use Argument.h, you can check source code Example1.cpp and play around.
+
+Step 1. Include Argument.h in your C++ source
+
+Step 2. Use macros to specify command line flags.
+
+2.1 Use BEGIN_PARAMETER_LIST(pl) to indicate a varialbe "pl" which contain interesting flags.
+
+2.2 Then use ADD_X_PARAMETER(pl, variable_name, flag, documentation) to specify the flag.
+
+Here, X meaning types, we support bool, int, double, std::string class;
+varialbe_name is how you want to name the variable;
+flag is exactly what you want to user to input in the command line;
+documentation is a brief introduction about what this flag does.
+
+In Example1.cpp, we define a bool flag -h, we want to name it as "isHelp", and its documentation 
+looks like "provide help". Then the syntax is:
+
+        ADD_BOOL_PARAMETER(pl, isHelp, "-h", "provide help")
+
+2.3 At last use END_PARAMETER_LIST(pl) to end. 
+
+Step 3. Parse command lines flags is easy: 
+
+    pl.Read(argc, argv);
+
+And when you want to check if user inputs "-h", use variable FLAG_isHelp, and its type is bool.
+Basically, all variables are names in FLAG_X fashion (similar to google-flags).
+
+
+Examples
+--------
+1. Example1.cpp 
+
+   A simple example showing whether user specified -h flag.
+
+2. ExampleStatus.cpp
+
+   Automatically print out parameter status.
+
+3. ExampleHelp.cpp
+
+   Automatically print documentation of each flags.
+
+4. Example2.cpp
+
+   A complete example showing how to check flags user have specified; write parameters to a file; read parameters from a file.
+
+FAQ
+------
+
+1. How to deal with trailing parameters (positional parameters)?
+
+If you want to parse:
+
+./prog arg1 arg2
+
+You can first run:
+
+    pl.Read(argc, argv);
+
+Then all remaining parameters will automatically stored in std::vector<std::string> FLAG_REMAIN_ARG.
+
+2. How to print out a status report showing which parameters are in effect?
+
+We provide a function ParameterList.Status()
+Check ExampleStatus.cpp for details
+
+3. Why do you want user to input documentation?
+
+We believe documentation should be close to the declearation. Therefore, our design is to keep 
+variable declaration and its documentaiton in one line. The benefits are: coder knows how these flags
+are supposed to use; user who checks the source code knows that too. Besides, we provide 
+ParameterList.Help() function to print a help message. 
+Check ExampleHelp.cpp for details
+
+4. Why do you only support bool, int, double and std::string types?
+
+Command line flags are just a plain texts laying in one command line, and we try to keep 
+things as simple as we can. We believe these types are sufficient to deal with most command line flags.
+However, let us know if you think we are wrong.
+
+5. Do you suppose multiple argument, such as -I./a1 -I./a2 ?
+
+We don't support that type. As we feel that may be not used often.
+User can always use this syntax -I./a1,./a2 and that will make the programmig much easier.
+However, if you know a scenario in which multiple argument is a must, we will try to integrate this function.
