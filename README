@@ -8,9 +8,10 @@ FEATURE
 -------
 
 1. Include Argument.h then we are all set.
-2. Comand line flags and its documentation are kept together, and you do no need to delcare any variable
-3. Store parameters to a file or restore from a file
-4. Robustly handle abnormal flags such as ---flag, or misuse between - and --
+2. Comand line flags and its documentation are kept together, and you do no need to delcare any variable.
+3. Store parameters to a file or restore from a file.
+4. Robustly handle abnormal flags such as ---flag, or misuse between - and --.
+5. Support grouping command line parameters.
 
 
 TUTORIAL
@@ -103,3 +104,30 @@ However, let us know if you think we are wrong.
 We don't support that type. As we feel that may be not used often.
 User can always use this syntax -I./a1,./a2 and that will make the programmig much easier.
 However, if you know a scenario in which multiple argument is a must, we will try to integrate this function.
+
+6. You lack the features of checking command line flags validity!
+
+Yes, we do lack that feature. Although most other packages provide such feature, they basically check single 
+flags at a time and requires you to write call-back functions. And you also need to write checking code for 
+2, 3 or more parameters together (such as not providing flags -a and -b together). We think the flags checking
+code can immediately follows our flags parsing codes. It is not complex, and it's good to keep our validity 
+checking code at one place.
+
+DESIGN
+------
+
+1. The impact of TCLAP
+
+TCAP features a template approach. However, the use of template is overwhelmed for command line flags parsing 
+purpose. Our goal is to minimize the code of converting user inputs to internal data strucure. TCLAP can do
+unnecessarily more things. As it brings more concepts; more classes; much longer compiling time.
+
+2. The impact of Google-gflags
+
+Google-gflags users can be familar with the naming convention: FLAG_XXX . We think that is smart. The prefix
+"FLAG_" let coder know it is from the command line, and it is obvious. We develop Argument.h for providing 
+additional functions: (1) grouping parameters; (2) save/restore parameters to/from file. Feature (1) allows
+user learn using flags in a logical and understandable way; feature (2) allow you to save the same parameters
+setting externally. It helps scientific community ran simulations easily.
+
+
